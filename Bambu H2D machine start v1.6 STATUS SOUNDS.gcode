@@ -76,11 +76,23 @@ G90
     {endif}
 {endif}
 
+;===== progress sound 1 =====
+M17
+M400 S1
+M1006 S1
+M1006 A53 B20 L99 C53 D20 M99 E53 F20 N99 
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+M1006 A61 B9 L99 C61 D9 M99 E61 F9 N99 
+M1006 W
+
 ;====== start heating everything ==============================
 M141 S[overall_chamber_temperature] ;start chamber heating
+M1002 gcode_claim_action : 29 ;seems like it might report cooling unless after a heat command?
+M400 S1
 M1002 set_filament_type:{filament_type[initial_no_support_extruder]}
 M1002 gcode_claim_action : 7
 M104 S{nozzle_temperature_initial_layer[initial_no_support_extruder]-80} ;start hotend heating, at temperature for nozzle wipe so we don't waste time cooling -a
+M400 S1
 M1002 gcode_claim_action : 2
 M140 S[bed_temperature_initial_layer_single] ;start bed heatbed heating -a
 
@@ -89,12 +101,37 @@ M140 S[bed_temperature_initial_layer_single] ;start bed heatbed heating -a
 M975 S1 	;turn on input shaping (req for cog noise reduction -a)
 M982.2 S1	;turn on cog noise reduction
 
-;===== first homing start =====
-M1002 gcode_claim_action : 13
-G28 X T300
+;===== first homing start =====================================
+M1002 gcode_claim_action : 13 ;display status "Homing Toolhead"
+G28 X T300 ;home X
 G150.1 F18000 ;wipe nozzle
+
+;===== progress sound 2 =====
+M17
+M400 S1
+M1006 S1
+M1006 A53 B20 L99 C53 D20 M99 E53 F20 N99 
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+M1006 A61 B9 L99 C61 D9 M99 E61 F9 N99 
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+M1006 A61 B9 L99 C61 D9 M99 E61 F9 N99 
+M1006 W
+
 G150.3 F18000 ;move to cutter/wiper?
-M400 P200
+;===== progress sound 3 =====
+	M17
+	M400 S1
+	M1006 S1
+	M1006 A53 B20 L99 C53 D20 M99 E53 F20 N99 
+	M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A61 B9 L99 C61 D9 M99 E61 F9 N99 
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A61 B9 L99 C61 D9 M99 E61 F9 N99 
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A61 B9 L99 C61 D9 M99 E61 F9 N99 
+	M1006 W
+
+M400 ;P200 enough with the dang pauses -a
 
 ;===== build plate detection ==================================
 M972 S24 P0 T2000
@@ -111,9 +148,21 @@ G1 X175 Y160 F30000
 G28 Z P0 T250
 M1009 Q1 L0
 
-;===== first homing end =======================================
-M400
-;M73 P99
+;===== progress sound 3 =====
+	M17
+	M400 S1
+	M1006 S1
+	M1006 A53 B20 L99 C53 D20 M99 E53 F20 N99 
+	M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A61 B9 L99 C61 D9 M99 E61 F9 N99 
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A61 B9 L99 C61 D9 M99 E61 F9 N99 
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A61 B9 L99 C61 D9 M99 E61 F9 N99 
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A61 B9 L99 C61 D9 M99 E61 F9 N99 
+	M1006 W
+
 
 ;===== detection start ========================================
 T1001
@@ -156,7 +205,7 @@ M628 S1
 {endif}
 M629
 M620 S[initial_no_support_extruder]A   ;switch material if AMS connected
-M1002 gcode_claim_action : 4
+M1002 gcode_claim_action : 4 ;display status "Changing filament"
 M1002 set_filament_type:UNKNOWN
 M400
 T[initial_no_support_extruder]
@@ -164,9 +213,28 @@ M628 S0
 M629
 M1002 set_filament_type:{filament_type[initial_no_support_extruder]}
 M621 S[initial_no_support_extruder]A
-;M104 S{nozzle_temperature_initial_layer[initial_no_support_extruder]}
+;M104 S{nozzle_temperature_initial_layer[initial_no_support_extruder]} ;so many duplicates -a
 M106 P1 S0
 G29.2 S1
+
+;===== progress sound 5 =====
+	M17
+	M400 S1
+	M1006 S1
+	M400
+	M1006 A53 B12 L99 C48 D12 M99 E53 F12 N99 
+	M1006 A0 B9 L99 C0 B9 M99 E0 F9 N99
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+	M1006 W
+
 
 ;===== auto extrude cali start =========================
 M975 S1
@@ -176,7 +244,7 @@ M622 J0
 M623
 M622 J1
     M1002 set_filament_type:{filament_type[initial_no_support_extruder]}
-    M1002 gcode_claim_action : 8
+    M1002 gcode_claim_action : 8 ;display status "Calibrating extrusion"
     M109 S{nozzle_temperature[initial_no_support_extruder]}
     G90
     M83
@@ -189,7 +257,7 @@ M622 J1
 M623
 M622 J2
     M1002 set_filament_type:{filament_type[initial_no_support_extruder]}
-    M1002 gcode_claim_action : 8
+    M1002 gcode_claim_action : 8 ;display status "Calibrating extrusion"
     M109 S{nozzle_temperature[initial_no_support_extruder]}
     G90
     M83
@@ -225,13 +293,33 @@ M400
 ;M73 P99
 
 ;===== wipe right nozzle start =====
-M106 S255 ;turn on fan to cool the nozzle [BUT WHY -a]
+M106 S255 ;turn on fan to cool the nozzle BUT WHY -a
 M1002 gcode_claim_action : 14 ;"Cleaning nozzle tip"
 {if (overall_chamber_temperature >= 40)}
     G150 T{nozzle_temperature_initial_layer[initial_no_support_extruder] - 80}
 {else} ;order of these was backwards, such that G150 ran twice if chamber heated
 	G150 T{nozzle_temperature_initial_layer[initial_no_support_extruder]}
 {endif}
+;===== progress sound 6 =====
+	M17
+	M400 S1
+	M1006 S1
+	M400
+	M1006 A53 B12 L99 C48 D12 M99 E53 F12 N99 
+	M1006 A0 B9 L99 C0 B9 M99 E0 F9 N99
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+	M1006 W
+
 
 ;===== bed leveling ==================================
 M1002 judge_flag g29_before_print_flag
@@ -264,16 +352,37 @@ M623
 M622 J0
     G28
 M623
+;===== progress sound 7 =====
+	M17
+	M400 S1
+	M1006 S1
+	M400
+	M1006 A53 B12 L99 C48 D12 M99 E53 F12 N99 
+	M1006 A0 B9 L99 C0 B9 M99 E0 F9 N99
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+	M1006 W
 
 ;===== z ofst cali start =====
+M1002 gcode_claim_action : 2 ;display status "Heatbed preheating"
 M190 S[bed_temperature_initial_layer_single]; ensure bed temp
-G383 O0 M2 T140
-M500
-G39.1 ; cali nozzle wrapped detection pos
+G383 O0 M2 T140 ;nozzle probe against bed? 'T140' echoes nozzle temp set for other nozzle-touch operations -a
+M500	;save settings to EEPROM
+G39.1	;cali nozzle wrapped detection pos translation-mangled, something about the position of the nozzle tip position? -a
 M500
 M400
 ;M73 P99
-;M141 S[overall_chamber_temperature]
 M104 S{nozzle_temperature_initial_layer[initial_no_support_extruder]} A; WHY DO WE DO THIS SO MANY TIMES -audi
 
 ;===== mech mode sweep start =====
@@ -303,42 +412,75 @@ M622 J0
 M623
 M622 J1
     M1002 gcode_claim_action : 39
-    M141 S0
+;    M141 S0 ;why would we turn chamber heating off for toolhead calibration -a
     M620.17 T0 S{nozzle_temperature_initial_layer[(first_non_support_filaments[0] != -1 ? first_non_support_filaments[0] : first_filaments[0])]} L{(first_non_support_filaments[0] != -1 ? first_non_support_filaments[0] : first_filaments[0])}
     M620.17 T1 S{nozzle_temperature_initial_layer[(first_non_support_filaments[1] != -1 ? first_non_support_filaments[1] : first_filaments[1])]} L{(first_non_support_filaments[1] != -1 ? first_non_support_filaments[1] : first_filaments[1])}
     G383 O1 T{nozzle_temperature_initial_layer[initial_no_support_extruder]} L{initial_no_support_extruder}
     M500
-    M141 S[overall_chamber_temperature]
+;    M141 S[overall_chamber_temperature]
 M623
 M622 J2
     M1002 gcode_claim_action : 39
-    M141 S0
+;    M141 S0 ;how is chamber heat going to mess this up; the cahmber is not going to cool to ambient in enough time for this to even matter -a
     M620.17 T0 S{nozzle_temperature_initial_layer[(first_non_support_filaments[0] != -1 ? first_non_support_filaments[0] : first_filaments[0])]} L{(first_non_support_filaments[0] != -1 ? first_non_support_filaments[0] : first_filaments[0])}
     M620.17 T1 S{nozzle_temperature_initial_layer[(first_non_support_filaments[1] != -1 ? first_non_support_filaments[1] : first_filaments[1])]} L{(first_non_support_filaments[1] != -1 ? first_non_support_filaments[1] : first_filaments[1])}
     G383.3 T{nozzle_temperature_initial_layer[initial_no_support_extruder]} L{initial_no_support_extruder}
     M500
-    M141 S[overall_chamber_temperature]
+;    M141 S[overall_chamber_temperature]
 M623
 M400
 ;M73 P99
 M1002 gcode_claim_action : 0
+;===== progress sound 8 =====
+	M17
+	M400 S1
+	M1006 S1
+	M400
+	M1006 A53 B12 L99 C48 D12 M99 E53 F12 N99 
+	M1006 A0 B9 L99 C0 B9 M99 E0 F9 N99
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+M1006 A0 B20 L99 C0 D20 M99 E0 F20 N99 
+	M1006 A48 B9 L99 C48 D9 M99 E48 F9 M99
+	M1006 W
 
-;===== switch again ===========================================
+;===== select extruder, change filament ============================
 M211 X0 Y0 Z0 ;turn off soft endstop
-G91
-G1 Z6 F1200
-G90
-M1002 set_filament_type:{filament_type[initial_no_support_extruder]}
-M620 S[initial_no_support_extruder]A
-;M400
-T[initial_no_support_extruder]
-M400
-M628 S0
-M629
-M400
-M621 S[initial_no_support_extruder]A ;load filament by AMS tray index
-M400
+G91 ;set relative coords
+G1 Z6 F1200 ;move build plate up
+G90 ;set absolute coords
+
+;don't waste time switching filament if correct filament already loaded
+{if (filament_type[current_extruder] != filament_type[initial_no_support_extruder])}
+	M1002 gcode_claim_action : 4 ;display status "Changing filament"
+	M1002 set_filament_type:{filament_type[initial_no_support_extruder]}
+	M620 S[initial_no_support_extruder]A ;select AMS by tray index
+	M400
+	T[initial_no_support_extruder] ;select/load initial extruder
+	M400
+	M628 S0 ;purge nozzle
+	M629 ;cut filament
+	M400
+	M621 S[initial_no_support_extruder]A ;load filament by AMS tray index
+	M400
 ;M73 P99
+{else}
+	M1002 set_filament_type:{filament_type[initial_no_support_extruder]}
+	M620 S[initial_no_support_extruder]A ;select AMS by tray index
+	;M400
+	T[initial_no_support_extruder] ;select/load initial extruder
+{endif}
 
 M104 S{nozzle_temperature_initial_layer[initial_no_support_extruder]} ;heat nozzle
 M140 S[bed_temperature_initial_layer_single]  ;heat bed
@@ -368,6 +510,7 @@ G1 Y265 F18000
 M1002 gcode_claim_action : 2
 M140 S[bed_temperature_initial_layer_single] ;make sure bed temp is set 
 M190 S[bed_temperature_initial_layer_single] ;wait for bed temp
+M400 S1
 M1002 gcode_claim_action : 15
 M104 S{nozzle_temperature_initial_layer[initial_no_support_extruder]} ;make sure hotend temp is set
 M109 S{nozzle_temperature_initial_layer[initial_no_support_extruder]} ;wait for hotend temp
